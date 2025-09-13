@@ -68,10 +68,16 @@ int main(){
 
     pthread_t prod_thread, cons_thread;
 
-    int thread_args_id = 1;
+    const int NUM_THREADS = 3;
+    pthread_t threads[NUM_THREADS];    // Массив идентификаторов потоков
+    int thread_id_args[NUM_THREADS];  
+
+    for(int i = 0; i < NUM_THREADS; i++){
+        thread_id_args[i] = i + 1;  
+        pthread_create(&prod_thread, NULL, producer, &thread_id_args[i]);
+    }
     
-    pthread_create(&prod_thread, NULL, producer, &thread_args_id);
-    //pthread_create(&prod_thread, NULL, producer, 2);
+    pthread_create(&prod_thread, NULL, producer, 2);
 
     pthread_join(prod_thread, NULL);
     //pthread_join(cons_thread, NULL);
