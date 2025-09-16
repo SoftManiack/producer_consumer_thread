@@ -3,59 +3,45 @@
 #include <pthread.h>
 #include <time.h> 
 
-#define BUFFER_SIZE 10
+#include "doubly_linked_list.h"
 
-struct Task
-{
-    /* data */
-    int time;
-    int task_id;
-    int creator_id;
-};
-
-struct Task tasks_buffer[10];
-int count = 0; 
+#define BUFFER_SIZE = 10
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t buffer_not_full = PTHREAD_COND_INITIALIZER;  
 pthread_cond_t buffer_not_empty = PTHREAD_COND_INITIALIZER; 
 
-int random_int(){
-    return 1 + rand() % ( 3 - 1 + 1);
+struct DoublyLinkedList* list;
+
+int random_int(int max, int min){
+    return 1 + rand() % ( max - min + 1);
 }
 
 void* producer(void* arg){
 
-    //size_t length = sizeof(tasks) / sizeof(task[0]);
     int thread_num = *(int *)arg;
 
     while (1)
     {
-        struct Task new_task = { 
-            random_int(), 
-            count + 1, 
-            thread_num 
-        };
-
-        while (count >= BUFFER_SIZE) {
+        while (list->size >= BUFFER_SIZE) {
             printf("Поток %d: буфер полон, жду...\n", thread_num);
             pthread_cond_wait(&buffer_not_full, &mutex);
         }
 
         pthread_mutex_lock(&mutex);
 
-        tasks_buffer[count] = new_task;
+        int task_id = random_int(10000,1);
 
-        count++;
+        add_first(list, task_id, random_int(3,1), thread_num);
 
         // Будим потребителей, если буфер был пуст
-        if (count == 1) {
+        if (list->size == 1) {
             pthread_cond_signal(&buffer_not_empty);
         }
 
         pthread_mutex_unlock(&mutex);
 
-        printf("Поток %d: добавил задачу номер %d !\n", thread_num, new_task.task_id);
+        printf("Поток %d: добавил задачу номер %d !\n", thread_num, task_id);
 
         sleep(2);
     }
@@ -67,7 +53,7 @@ void* consumer(void *arg){
 
     while(1){
         //pthread_mutex_lock(&mutex);
-
+        
         //pthread_mutex_unlock(&mutex);
     }
 
@@ -75,6 +61,8 @@ void* consumer(void *arg){
 
 int main(){
     srand(time(NULL));
+
+    init_list(list);
 
     const int NUM_THREADS = 2;
     pthread_t threads_producer[NUM_THREADS];    // Массив идентификаторов потоков
@@ -88,8 +76,6 @@ int main(){
         pthread_create(&threads_producer[i], NULL, producer, &thread_producer_id_args[i]);
         pthread_create(&threads_consumer[i], NULL, consumer, &thread_consumer_id_args[i]);
     }
-    
-    //pthread_create(&prod_threads, NULL, producer, 2);
 
     for (int i = 0; i < NUM_THREADS; i++) {
         pthread_join(threads_producer[i], NULL);
@@ -97,6 +83,8 @@ int main(){
     }
 
     pthread_mutex_destroy(&mutex);
+
+    //destroy_resources();
     
     return 0;
 }
