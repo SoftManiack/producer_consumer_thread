@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef DOUBLY_LINKED_LIST_H
+#define DOUBLY_LINKED_LIST_H
+
 struct Task
 {
     /* data */
@@ -26,3 +29,5 @@ void add_last(struct DoublyLinkedList* list, int task_id, int time, int creator_
 int remove_first(struct DoublyLinkedList* list);
 int remove_last(struct DoublyLinkedList* list);
 int remove_task_by_id(struct DoublyLinkedList* list, int task_id);
+
+#endif

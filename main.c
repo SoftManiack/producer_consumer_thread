@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h> 
+#include <unistd.h>
 
 #include "doubly_linked_list.h"
 
-#define BUFFER_SIZE = 10
+#define BUFFER_SIZE 10
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t buffer_not_full = PTHREAD_COND_INITIALIZER;  
@@ -21,7 +22,7 @@ void* producer(void* arg){
 
     int thread_num = *(int *)arg;
 
-    while (1)
+    /*while (1)
     {
         while (list->size >= BUFFER_SIZE) {
             printf("Поток %d: буфер полон, жду...\n", thread_num);
@@ -44,7 +45,7 @@ void* producer(void* arg){
         printf("Поток %d: добавил задачу номер %d !\n", thread_num, task_id);
 
         sleep(2);
-    }
+    }*/
 
     return NULL;
 }
@@ -61,6 +62,14 @@ void* consumer(void *arg){
 
 int main(){
     srand(time(NULL));
+    printf("12");
+
+    struct DoublyLinkedList* list = (struct DoublyLinkedList*)malloc(sizeof(struct DoublyLinkedList));
+    
+    if(list == NULL){
+        printf("Memory allocation error !");
+        return 1;
+    }
 
     init_list(list);
 

@@ -10,7 +10,7 @@ struct Task* create_node(int task_id, int time, int creator_id) {
         exit(1);
     }
     new_task->task_id = task_id;
-    new_task->task_id;
+    new_task->time = time;
     new_task->creator_id = creator_id;
     new_task->next = NULL;
     new_task->prev = NULL;

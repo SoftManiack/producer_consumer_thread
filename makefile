@@ -1,20 +1,22 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -pthread -std=c99
-TARGET = producer_consumer
-OBJS = main.o producer_consumer.o
+CFLAGS = -Wall -Wextra -std=c99 -pthread  # Добавьте -pthread здесь
+TARGET = program
+SOURCES = doubly_linked_list.c main.c
+OBJECTS = $(SOURCES:.c=.o)
 
-all: $(TARGET)
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJECTS)
 
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
-
-main.o: main.c producer_consumer.h
-	$(CC) $(CFLAGS) -c main.c
-
-producer_consumer.o: producer_consumer.c producer_consumer.h
-	$(CC) $(CFLAGS) -c producer_consumer.c
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(TARGET) $(OBJS)
+	rm -f $(OBJECTS) $(TARGET)
 
-.PHONY: all clean
+run: $(TARGET)
+	./$(TARGET)
+
+.PHONY: clean run
+# make     
+# make run 
+# make cleannake
