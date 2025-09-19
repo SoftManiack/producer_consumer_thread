@@ -1,7 +1,5 @@
 #include "doubly_linked_list.h"
 
-#define BUFFER_SIZE 10
-
 // Создание нового узла
 struct Task* create_node(int task_id, int time, int creator_id) {
     struct Task* new_task = (struct Task*)malloc(sizeof(struct Task));

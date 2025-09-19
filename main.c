@@ -15,14 +15,14 @@ pthread_cond_t buffer_not_empty = PTHREAD_COND_INITIALIZER;
 struct DoublyLinkedList* list;
 
 int random_int(int max, int min){
-    return 1 + rand() % ( max - min + 1);
+    return min + rand() % ( max - min + 1);
 }
 
 void* producer(void* arg){
 
     int thread_num = *(int *)arg;
 
-    /*while (1)
+    while (1)
     {
         while (list->size >= BUFFER_SIZE) {
             printf("Поток %d: буфер полон, жду...\n", thread_num);
@@ -45,7 +45,7 @@ void* producer(void* arg){
         printf("Поток %d: добавил задачу номер %d !\n", thread_num, task_id);
 
         sleep(2);
-    }*/
+    }
 
     return NULL;
 }
@@ -61,10 +61,10 @@ void* consumer(void *arg){
 }
 
 int main(){
+    printf("=== Запуск системы \n");
     srand(time(NULL));
-    printf("12");
 
-    struct DoublyLinkedList* list = (struct DoublyLinkedList*)malloc(sizeof(struct DoublyLinkedList));
+    list = (struct DoublyLinkedList*)malloc(sizeof(struct DoublyLinkedList));
     
     if(list == NULL){
         printf("Memory allocation error !");
