@@ -56,14 +56,21 @@ void add_last(struct DoublyLinkedList* list, int task_id, int time, int creator_
     }
 }
 
-int remove_first(struct DoublyLinkedList* list) {
+int* remove_first(struct DoublyLinkedList* list) {
+
+    int *arr = malloc(2 * sizeof(int));
+
     if (is_empty(list)) {
         printf("List is empty!\n");
         return -1;
     }
     
     struct Task* temp = list->head;
-    int id_task = temp->task_id;
+    if (arr != NULL) {
+        arr[0] = temp->task_id;
+        arr[1] = temp->time;  
+    }
+
     
     if (list->head == list->tail) {
         list->head = NULL;
@@ -75,17 +82,24 @@ int remove_first(struct DoublyLinkedList* list) {
     
     free(temp);
     list->size--;
-    return id_task;
+    return arr;
 }
 
-int remove_last(struct DoublyLinkedList* list){
+int* remove_last(struct DoublyLinkedList* list){
+
+    int *arr = malloc(2 * sizeof(int));
+
     if (is_empty(list)) {
         printf("List is empty!\n");
         return -1;
     }
 
-    struct Task* temp = list->head;
-    int id_task = temp->task_id;
+    struct Task* temp = list->tail;
+
+    if (arr != NULL) {
+        arr[0] = temp->task_id;;  // Первое значение
+        arr[1] = temp->time;  // Второе значение
+    }
 
     if (list->head == list->tail) { 
         list->head = NULL;
@@ -97,10 +111,11 @@ int remove_last(struct DoublyLinkedList* list){
     
     free(temp);
     list->size--;
-    return id_task;
+    return arr;
 }
 
 int remove_task_by_id(struct DoublyLinkedList* list, int task_id){
+
     if (is_empty(list)) {
         return 0; 
     }
