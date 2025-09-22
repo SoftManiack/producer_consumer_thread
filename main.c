@@ -37,14 +37,13 @@ void* producer(void* arg){
 
         // Будим потребителей, если буфер был пуст
         if (list->size == 1) {
-            pthread_cond_signal(&buffer_not_empty);
+            pthread_cond_broadcast(&buffer_not_empty);
         }
 
         pthread_mutex_unlock(&mutex);
 
-        printf("Producer %d: добавил задачу номер %d !\n", thread_num, task_id);
-
         sleep(2);
+        printf("Producer %d: добавил задачу номер %d , в списке %d задач!\n", thread_num, task_id, list->size);
     }
 
     return NULL;
@@ -52,8 +51,8 @@ void* producer(void* arg){
 
 void* consumer(void *arg){
 
-    int delay = 0;
     int thread_num = *(int *)arg;
+    int delay = 0;
 
     printf("Consumer %d запущен\n", thread_num);
     
@@ -71,17 +70,22 @@ void* consumer(void *arg){
 
             if (values != NULL) {
                 delay = values[1];
-                printf("Consumer %d обрабатывает задачу: %d, %d: секунд, в списке %d задач \n", thread_num, values[0], values[1], list->size);
+                printf("Consumer %d взял задачу: %d, %d: секунд, в списке %d задач \n", thread_num, values[0], values[1], list->size);
 
                 free(values);  // Не забываем освободить память!
             }
 
             if (list->size == BUFFER_SIZE - 1) {
-                pthread_cond_signal(&buffer_not_full);
+                pthread_cond_broadcast(&buffer_not_full);
             }
         }
 
         pthread_mutex_unlock(&mutex);
+
+        if (delay > 0) {
+            printf("Consumer %d: обрабатываю задачу %d секунд...\n", thread_num, delay);
+            sleep(delay);
+        }
     }
 
     sleep(delay);
